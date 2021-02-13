@@ -124,11 +124,7 @@ app.get('/login', mw, async (req, res) => {
     }
     console.log('Log In: Failure');
     return res.status(401).send();
-}); 
-
-app.get('/.well-known/acme-challenge/:content', function(req, res) {
-  res.send('ligwmII3q5TgxdSq8pt04nQNCL2PRayxBHVIklAyy9c.j_v_L8rrcyRQmuz522XRsY32cG0YFQz3QyeQ8nP2XEI')
-})
+});
 
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static('build'));
