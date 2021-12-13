@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { Pool } = require('pg');
+const db = require('./config/db');
 const bodyParser = require('body-parser');
 const jwt = require('express-jwt');
 const jwtAuthz = require('express-jwt-authz');
@@ -39,10 +39,10 @@ const checkJwt = jwt({
     algorithms: ['RS256']
 });
 
-app.use(checkJwt);
+// app.use(checkJwt);
 
 const mw = (req, res, next) => {
-    console.log('req.url', req.url);
+    console.log('endpoint:', req.url);
     next();
 }
 
@@ -50,23 +50,15 @@ app.get('/', (req, res) => {
     res.send('~SUCCESS~');
 })
 
-const pgClient = new Pool({
-    user: process.env.DB_USERNAME,
-    host: process.env.DB_HOST,
-    database: process.env.DB_DATABASE,
-    password: process.env.DB_PASSWORD,
-    port: process.env.DB_PORT
-});
-
 app.get('/users/all', mw, async (req, res) => {
-    const values = await pgClient.query('SELECT * FROM trainusers');
+    const values = await db.query('SELECT * FROM trainusers');
     res.cookie('myCookie', 'Secret cookie');
     res.status(200).send(values.rows);
 })
 
 app.get('/workouts', mw, async (req, res) => {
     const { user } = req.query;
-    const values = await pgClient.query(
+    const values = await db.query(
         'select * from trainworkouts where username = $1 order by wdate desc', 
         [user]
     );
@@ -82,7 +74,7 @@ app.post('/workouts/new', mw, async (req, res) => {
     const meditation = req.body.meditation;
     const sauna = req.body.sauna;
 
-    await pgClient.query(
+    await db.query(
         'insert into trainworkouts (username,wdate,type,description,meditation,sauna)' +
         'values ($1,$2,$3,$4,$5,$6)',
         [user,date,type,description,meditation,sauna],
@@ -109,7 +101,7 @@ app.get('/login', mw, async (req, res) => {
         const username = decoded.substring(0,index);
         const password = decoded.substring(index + 1);
 
-        const user = await pgClient.query(
+        const user = await db.query(
             'select * from trainusers where username = $1',
             [username]
         )
