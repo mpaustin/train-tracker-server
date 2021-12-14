@@ -4,7 +4,7 @@
   "description": "Train Tracker",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest --passWithNoTests",
     "start": "node server.js",
     "server": "nodemon server.js"
   },
@@ -30,5 +30,8 @@
     "express-jwt-authz": "^2.4.1",
     "jwks-rsa": "^1.12.2",
     "pg": "^8.5.1"
+  },
+  "devDependencies": {
+    "jest": "^27.4.5"
   }
 }
