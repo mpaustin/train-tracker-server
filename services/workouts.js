@@ -15,12 +15,14 @@ module.exports = (app) => {
 
     app.post('/workouts/new', mw, async (req, res) => {
 
-        const user = req.body.user;
-        const date = req.body.date;
-        const type = req.body.type;
-        const description = req.body.description;
-        const meditation = req.body.meditation;
-        const sauna = req.body.sauna;
+        const {
+            user, 
+            date, 
+            type, 
+            description, 
+            meditation, 
+            sauna
+        } = req.body;
 
         await db.query(
             'insert into trainworkouts (username,wdate,type,description,meditation,sauna)' +
